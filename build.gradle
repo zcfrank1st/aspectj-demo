@@ -1,0 +1,71 @@
+group 'com.chaos.aspectj'
+version '1.0'
+
+project.ext {
+    aspectjVersion = '1.8.4'
+}
+
+apply plugin: 'java'
+apply plugin: 'aspectj'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    repositories {
+        maven {
+            url "https://maven.eveoh.nl/content/repositories/releases"
+        }
+    }
+
+    dependencies {
+        classpath "nl.eveoh:gradle-aspectj:1.6"
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.4'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+mainClassName = "com.chaos.aspectj.demo.Demo"
+
+task ('generateAopFile') << {
+    def aopFile = new File("${project.rootDir}/src/main/java/GlobalAspectj.java")
+    aopFile.createNewFile()
+    aopFile.write("""
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+
+/**
+ * Created by zcfrank1st on 21/12/2016.
+ */
+@Aspect
+public class GlobalAspectj {
+
+    @Pointcut(value = "execution(* com.chaos.aspectj.demo.Demo.hello(..))")
+    public void DemoPointCut() {}
+
+    @Around("DemoPointCut()")
+    public void around(ProceedingJoinPoint point) throws Throwable {
+        System.out.println("demo demo");
+        point.proceed();
+    }
+}
+""")
+}
+
+task ('removeAOPFile') << {
+    def aopFile = new File("${project.rootDir}/src/main/java/GlobalAspectj.java")
+    aopFile.delete()
+}
+
+compileAspect.dependsOn generateAopFile
+build.finalizedBy removeAOPFile
