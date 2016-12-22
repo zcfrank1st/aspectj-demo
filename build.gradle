@@ -6,7 +6,7 @@ project.ext {
 }
 
 apply plugin: 'java'
-apply plugin: 'aspectj'
+apply plugin: 'com.chaos.watchman'
 apply plugin: 'application'
 
 sourceCompatibility = 1.8
@@ -14,12 +14,12 @@ sourceCompatibility = 1.8
 buildscript {
     repositories {
         maven {
-            url "https://maven.eveoh.nl/content/repositories/releases"
+            url "http://nexus.djdev.com/nexus/content/repositories/releases"
         }
     }
 
     dependencies {
-        classpath "nl.eveoh:gradle-aspectj:1.6"
+        classpath "com.chaos:watchman:1.0"
     }
 }
 
@@ -34,38 +34,3 @@ dependencies {
 }
 
 mainClassName = "com.chaos.aspectj.demo.Main"
-
-task ('generateAopFile') << {
-    def aopFile = new File("${project.rootDir}/src/main/java/GlobalAspectj.java")
-    aopFile.createNewFile()
-    aopFile.write("""
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-
-/**
- * Created by zcfrank1st on 21/12/2016.
- */
-@Aspect
-public class GlobalAspectj {
-
-    @Pointcut(value = "execution(* com.chaos.aspectj.demo.IDemo.hello(..))")
-    public void DemoPointCut() {}
-
-    @Around("DemoPointCut()")
-    public void around(ProceedingJoinPoint point) throws Throwable {
-        System.out.println("demo demo");
-        point.proceed();
-    }
-}
-""")
-}
-
-task ('removeAOPFile') << {
-    def aopFile = new File("${project.rootDir}/src/main/java/GlobalAspectj.java")
-    aopFile.delete()
-}
-
-compileAspect.dependsOn generateAopFile
-build.finalizedBy removeAOPFile
