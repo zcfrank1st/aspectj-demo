@@ -33,7 +33,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-mainClassName = "com.chaos.aspectj.demo.Demo"
+mainClassName = "com.chaos.aspectj.demo.Main"
 
 task ('generateAopFile') << {
     def aopFile = new File("${project.rootDir}/src/main/java/GlobalAspectj.java")
@@ -50,7 +50,7 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class GlobalAspectj {
 
-    @Pointcut(value = "execution(* com.chaos.aspectj.demo.Demo.hello(..))")
+    @Pointcut(value = "execution(* com.chaos.aspectj.demo.IDemo.hello(..))")
     public void DemoPointCut() {}
 
     @Around("DemoPointCut()")
