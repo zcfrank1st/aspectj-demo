@@ -19,7 +19,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.chaos:watchman:1.0"
+        classpath "com.chaos:watchman:2.0"
     }
 }
 
